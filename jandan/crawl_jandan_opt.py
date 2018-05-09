@@ -83,6 +83,6 @@ if __name__ == '__main__':
     # ooxx page not less than 900
     page_start = int(input('Input  start page number: '))
     page_end = int(input('Input  end   page number: '))
-    is_ooxx = int(input('Select 0: wuliao 1: meizi 2: funny '))
+    is_ooxx = int(input('Select 0: pic 1: ooxx 2: funny '))
     main(page_start, page_end, is_ooxx)
 
