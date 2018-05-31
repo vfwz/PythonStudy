@@ -1,6 +1,8 @@
+import random
+import asyncio
+import aiohttp
 from urllib import request
 import json
-import random
 
 
 def drag_all():
@@ -31,25 +33,22 @@ def drag_once(begin_id):
         return articles
 
 
-def view(mask_id, times):
+async def view(mask_id, times):
+    print('======', 'mask_id:', mask_id, ', view times:', str(times))
     url_prefix = 'https://www.meipian.cn/'
     article_url = url_prefix + mask_id
-    k = 0
-    while k < times:
-        k = k + 1
-        with request.urlopen(article_url) as f:
-            # data = f.read()
-            print(str(k), 'request url:', article_url, ',status:', f.status, f.reason)
+    for seq in range(1, times):
+        print('view the %s %d times...' % (article_url, seq))
+        async with aiohttp.request('GET', article_url) as f:
+            print('%s. %s status: %s %s' % (str(seq), article_url, f.status, f.reason))
 
 
 def start():
     all_articles = drag_all()
-    n = 0
-    for article in all_articles:
-        times = random.randint(100, 130)
-        n = n + 1
-        print(str(n), ':', 'id:', article.get('id'), 'mask_id:', article.get('mask_id'), ', view times:', str(times))
-        view(article.get('mask_id'), times)
+    tasks = [view(article.get('mask_id'), random.randint(5, 10)) for article in all_articles]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.wait(tasks))
+    loop.close()
 
 
 if __name__ == '__main__':
